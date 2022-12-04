@@ -3,20 +3,20 @@ import speech_recognition as sr
 import datetime
 import wikipedia 
 import webbrowser
-from selenium.webdriver.common.keys import Keys
+import pyautogui
 import os
-import smtplib
-from PIL import Image,ImageGrab
-import time
+from PIL import ImageGrab
 import psutil
-import selenium
-from selenium import webdriver
-from googlesearch import search
+import time
 
+greeting_words = ["hello", "hi", "hey", "how are you?"]
+stop_words = ["stop", "quit", "break the code"]
 engine = pyttsx3.init('sapi5')
 voices = engine.getProperty('voices')
-engine.setProperty('voice', voices[0].id)
+engine.setProperty('voice', voices[1].id)
 path = "D:\\Applications\\chromedriver.exe"
+battery = psutil.sensors_battery()
+bat = battery.percent
 
 def speak(audio):
     engine.say(audio)
@@ -44,42 +44,48 @@ def convertTime(seconds):
     hours, minutes = divmod(minutes, 60)
     return "%d:%02d:%02d" % (hours, minutes, seconds)
 
-battery = psutil.sensors_battery()
-bat = battery.percent
-
 def takeCommand():
-
     r = sr.Recognizer()
     with sr.Microphone() as source:
         print("Listening...")
-        r.pause_threshold = 0.5
-        audio = r.listen(source)
-
-
+        r.adjust_for_ambient_noise(source)
+        audio = r.listen(source, phrase_time_limit=10, timeout=5)
     try:
         print("Recognizing...")    
-        query = r.recognize_google(audio, language='en-hi')
+        query = r.recognize_google(audio, language='en-us')
         print(f"User said: {query}\n")
-
     except:
-        print("Say that again please...")  
-        return "None"
+        print("Couldn't recognise anything...")  
     return query
 
-if __name__ == "__main__":
-    wishMe()
+def restart():
+    from win32gui import GetWindowText, GetForegroundWindow
+    if "Visual Studio Code" in (GetWindowText(GetForegroundWindow())): 
+        pyautogui.hotkey('ctrl', 'shift', '`')
+        pyautogui.typewrite("& D:/Python/python.exe d:/Python-Codes/Jarvis.py")
+        pyautogui.press('enter')
+    else:
+        pyautogui.hotkey('win', '3')
+        time.sleep(0.25)
+        pyautogui.hotkey('ctrl', 'shift', '`')
+        pyautogui.typewrite("& D:/Python/python.exe d:/Python-Codes/Jarvis.py")
+        pyautogui.press('enter')
+
+wishMe()
 
 while True:
-    
     query = takeCommand().lower()
     
     if 'wikipedia' in query:
+        try:
             speak('Searching Wikipedia...')
             query = query.replace("wikipedia", "")
             results = wikipedia.summary(query, sentences=3)
             speak("According to Wikipedia")
             print(results)
             speak(results)
+        except:
+            speak("Couldn't find anything on wikipedia")
 
     elif 'open youtube' in query:
            webbrowser.open("https://www.youtube.com/")
@@ -87,24 +93,18 @@ while True:
     elif 'open instagram' in query:
             webbrowser.open("https://www.instagram.com/")
 
-    elif 'open stackoverflow' in query:
+    elif 'open stack overflow' in query:
             webbrowser.open("stackoverflow.com")
             
     elif 'open liked videos' in query:
             webbrowser.open_new("https://www.youtube.com/playlist?list=LL")
             
-    elif 'open Dino game' in query:
+    elif 'open dino game' in query:
             webbrowser.open("chrome://dino/")
 
     elif 'the time' in query:
-            strTime = datetime.datetime.now().strftime("%H:%M:%S")    
+            strTime = datetime.datetime.now().strftime("%I:%M:%S %p")    
             speak(f"Sir, the time is {strTime}")
-            
-    elif 'how are you' in query:
-            speak('I am fine sir thank you')
-            
-    elif 'hi' in query:
-            speak('hi sir how are you')
             
     elif 'mental' in query:
             speak('you are stupid')
@@ -118,20 +118,12 @@ while True:
             speak('yes sir screen shot in 3 seconds  3                                ...2                                ...1')
             takeScreenshot()
     
-    elif "open ms teams" in query:
-            speak("yes Sir here it is")
-            codePath = "C:\\Users\\PARAM\\AppData\\Local\\Microsoft\\Teams\\Update.exe" 
-            os.startfile(codePath)
-
     elif 'battery' in query:
+        bat = str(bat)
         if battery.power_plugged == False:
-            speak(bat)
-            speak("%               . . . and not plugged in")
-
+            speak((bat+"%               . . . and not plugged in"))
         elif battery.power_plugged == True:
-            speak(bat)
-            speak("%                . . . and plugged in")
-
+            speak((bat+"%                . . . and plugged in"))
         else:
             speak('I dont know that')
             
@@ -145,24 +137,37 @@ while True:
             codePath = "C:\\Users\\PARAM\\AppData\\Local\\WhatsApp\\WhatsApp.exe"
             os.startfile(codePath)
 
-    elif 'open minecraft' in query:
-            speak('yes sir here it is')
-            codePath = "C:\\Users\\PARAM\\AppData\\Roaming\\.minecraft\\TLauncher.exe"
-            os.startfile(codePath)
-            
-    elif 'open arduino' in query:
-            speak('yes sir here it is')
-            codePath = "C:\\Program Files (x86)\\Arduino\\arduino.exe"
-            os.startfile(codePath)
+    elif 'close tab' in query:
+        pyautogui.hotkey('ctrl' , 'w')
 
-    elif 'stop' in query:
-        speak("Ok Sir bye....")
+    elif 'reopen tab' in query:
+        pyautogui.hotkey('ctrl' , 'shift', 't')
+
+    elif query in greeting_words:
+        speak("Hello")
+
+    elif query in stop_words:
+        speak("Ok Sir bye")
         break
 
-    elif 'google' in query:
-        query_1 = query.replace("google ", "")
-        for j in search(query_1, tld="com", num=1, stop=1, pause=1):
-            print(j)
-        driver = webdriver.Chrome(path)
-        driver.get(j)
+    elif "reboot" in query: 
+        restart()
+        break
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    

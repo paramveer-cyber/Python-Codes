@@ -1,3 +1,0 @@
-# Python-Codes
-
-Some Codes

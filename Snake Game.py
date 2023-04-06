@@ -43,7 +43,6 @@ def main():
         runGame()
         showGameOverScreen()
 
-
 def runGame():
     # Set a random start point.
     global newHead
@@ -106,13 +105,11 @@ def runGame():
         pygame.display.update()
         FPSCLOCK.tick(FPS)
 
-
 def drawPressKeyMsg():
     pressKeySurf = BASICFONT.render('Press a key to play.', True, DARKGRAY)
     pressKeyRect = pressKeySurf.get_rect()
     pressKeyRect.topleft = (WINDOWWIDTH - 200, WINDOWHEIGHT - 30)
     DISPLAYSURF.blit(pressKeySurf, pressKeyRect)
-
 
 def checkForKeyPress():
     if len(pygame.event.get(QUIT)) > 0:
@@ -124,7 +121,6 @@ def checkForKeyPress():
     if keyUpEvents[0].key == K_ESCAPE:
         terminate()
     return keyUpEvents[0].key
-
 
 def showStartScreen():
     titleFont = pygame.font.Font('freesansbold.ttf', 100)
@@ -155,15 +151,12 @@ def showStartScreen():
         degrees1 += 3  # rotate by 3 degrees each frame
         degrees2 += 7  # rotate by 7 degrees each frame
 
-
 def terminate():
     pygame.quit()
     sys.exit()
 
-
 def getRandomLocation():
     return {'x': random.randint(0, CELLWIDTH - 1), 'y': random.randint(0, CELLHEIGHT - 1)}
-
 
 def showGameOverScreen():
     gameOverFont = pygame.font.Font('freesansbold.ttf', 150)
@@ -186,13 +179,11 @@ def showGameOverScreen():
             pygame.event.get()  # clear event queue
             return
 
-
 def drawScore(score):
     scoreSurf = BASICFONT.render('Score: %s' % score, True, WHITE)
     scoreRect = scoreSurf.get_rect()
     scoreRect.topleft = (WINDOWWIDTH - 120, 10)
     DISPLAYSURF.blit(scoreSurf, scoreRect)
-
 
 def drawWorm(wormCoords):
     for coord in wormCoords:
@@ -203,13 +194,11 @@ def drawWorm(wormCoords):
         wormInnerSegmentRect = pygame.Rect(x + 4, y + 4, CELLSIZE - 8, CELLSIZE - 8)
         pygame.draw.rect(DISPLAYSURF, GREEN, wormInnerSegmentRect)
 
-
 def drawApple(coord):
     x = coord['x'] * CELLSIZE
     y = coord['y'] * CELLSIZE
     appleRect = pygame.Rect(x, y, CELLSIZE, CELLSIZE)
     pygame.draw.rect(DISPLAYSURF, RED, appleRect)
-
 
 def drawGrid():
     for x in range(0, WINDOWWIDTH, CELLSIZE):  # draw vertical lines

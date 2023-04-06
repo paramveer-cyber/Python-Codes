@@ -1,8 +1,9 @@
 from tkinter import *
+import random
 
 # Defining Variables....
 x0, y0, x1, y1 = 650, 350, 650, 350
-gap, angle_1, angle_2 = 25, 1, 2
+gap, angle_1, angle_2, counter = 25, 1, 2, 0
 
 # Basic tkinter
 root = Tk()
@@ -39,17 +40,26 @@ def down():
     board.create_line(x0, y0, x1, y1, fill="white", width=3)
     x0, y0 = x1, y1
     return x0, y0, x1, y1
+def make_segment():
+    return [random.randrange(0, 1280) for _ in range(4)]
+def draw_random_lines():
+    board.create_line(*make_segment(), fill="white")
+    root.after(random.randrange(0, 200), draw_random_lines)
 
 # Main loop function 
-def spiral(size):
-    for i in range(size):
-        global angle_1, angle_2
-        right()
-        down()
-        left()
-        up()
-        angle_1, angle_2 = angle_1+2, angle_2+2
+def spiral():
+    global angle_1, angle_2, counter
+    right()
+    down()
+    left()
+    up()
+    angle_1, angle_2 = angle_1+2, angle_2+2
+    counter = counter+1
+    if counter<15:
+        root.after(500, spiral)
 
-spiral(10)
+spiral()
+root.after(7000, draw_random_lines)       
+# draw_random_lines()   
 
 root.mainloop()

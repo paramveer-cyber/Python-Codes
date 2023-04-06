@@ -17,7 +17,6 @@ def takeCommand():
         print(f"User said: {query}\n")
     except:
         print("Couldn't recognise anything...")  
-    print(query)
     return query
     
-takeCommand()
+print(takeCommand())
